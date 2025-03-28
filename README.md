@@ -42,6 +42,7 @@ Launch the HyFlexPIM_llama3.ipynb notebook using Jupyter and follow each block l
 The steps are sequential and can be executed one by one.
 
 🧪 Simulation Steps
+
 ✅ Step 1: Model Preparation
 By default, the notebook uses the LLaMA-3.2 1B model and the PTP dataset.
 You can replace them with your own quantized model and dataset.
