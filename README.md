@@ -35,3 +35,11 @@ First, clone the repository:
 ```bash
 git clone https://github.com/songchangeun96/HyFlexPIM.git
 cd HyFlexPIM
+```
+
+
+Then, install the required dependencies:
+
+```bash
+pip install -r requirements.txt
+```
