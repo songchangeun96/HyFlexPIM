@@ -45,10 +45,10 @@ The steps are sequential and can be executed one by one.
 ## 🧪 Simulation Steps
 
 ## ✅ Step 1: Model Preparation
-By default, the notebook uses the LLaMA-3.2 1B model and the PTP dataset.
+By default, the notebook uses the LLaMA-3.2 1B model and the PTB dataset.
 You can replace them with your own quantized model and dataset.
 
-The function evaluate_model() can be used to evaluate accuracy (optional).
+The function evaluate_model() can be used to evaluate loss (optional).
 
 ## ✅ Step 2: Pre-SVD Fine-tuning (Recommended)
 Before applying SVD, we recommend fine-tuning the model for 2–3 epochs.
@@ -61,13 +61,11 @@ model = model.merge_and_unload()
 This step consolidates model weights and prepares them for SVD decomposition.
 
 ## ✅ Step 3: Singular Value Decomposition (SVD)
-Apply SVD and truncate the Linear layers via:
+Apply SVD and truncate all linear layers via:
 ```bash
-replace_linear_layer_llama(model, rank_ratio)
+replace_linear_layer_llama(model)
 ```
 Converts all Linear layers into low-rank U Σ Vᵀ format.
-
-rank_ratio controls the truncation level while maintaining parameter and OPS counts.
 
 ## ✅ Step 4: Fine-tuning & Gradient Redistribution
 To recover any accuracy degradation from SVD:
@@ -84,14 +82,14 @@ Reload the gradients and apply noise:
 
 ```bash
 load_gradients(...)
-apply_noise_to_llama(model, std=..., threshold=...)
+apply_noise_to_llama(model, std=..., th=...)
 ```
 
 - std: Controls noise magnitude.
 
-- th: Determines the SLC rate via gradient sensitivity ranking.
+- th: Determines the proportion of weights stored in SLC by adjusting a threshold parameter.
 
-Then, run inference to evaluate noise-aware model accuracy.
+Then, run inference to evaluate noise-aware model loss.
 
 
 
