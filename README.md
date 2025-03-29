@@ -38,19 +38,19 @@ Then, install the required dependencies:
 pip install -r requirements.txt
 ```
 
-##🚀 How to Run
+## 🚀 How to Run
 Launch the HyFlexPIM_llama3.ipynb notebook using Jupyter and follow each block labeled Step X.
 The steps are sequential and can be executed one by one.
 
-##🧪 Simulation Steps
+## 🧪 Simulation Steps
 
-##✅ Step 1: Model Preparation
+## ✅ Step 1: Model Preparation
 By default, the notebook uses the LLaMA-3.2 1B model and the PTP dataset.
 You can replace them with your own quantized model and dataset.
 
 The function evaluate_model() can be used to evaluate accuracy (optional).
 
-##✅ Step 2: Pre-SVD Fine-tuning (Recommended)
+## ✅ Step 2: Pre-SVD Fine-tuning (Recommended)
 Before applying SVD, we recommend fine-tuning the model for 2–3 epochs.
 Better pre-trained performance usually improves noise robustness.
 
@@ -60,7 +60,7 @@ model = model.merge_and_unload()
 ```
 This step consolidates model weights and prepares them for SVD decomposition.
 
-##✅ Step 3: Singular Value Decomposition (SVD)
+## ✅ Step 3: Singular Value Decomposition (SVD)
 Apply SVD and truncate the Linear layers via:
 ```bash
 replace_linear_layer_llama(model, rank_ratio)
@@ -69,7 +69,7 @@ Converts all Linear layers into low-rank U Σ Vᵀ format.
 
 rank_ratio controls the truncation level while maintaining parameter and OPS counts.
 
-##✅ Step 4: Fine-tuning & Gradient Redistribution
+## ✅ Step 4: Fine-tuning & Gradient Redistribution
 To recover any accuracy degradation from SVD:
 
 Fine-tune the model for 1–3 epochs.
@@ -79,7 +79,7 @@ Perform gradient redistribution based on gradient sensitivity.
 Gradient files are saved in ./gradient/ and used for selective noise injection.
 Save the final model after this step.
 
-##✅ Step 5: Noise-Injection Inference
+## ✅ Step 5: Noise-Injection Inference
 Reload the gradients and apply noise:
 
 ```bash
