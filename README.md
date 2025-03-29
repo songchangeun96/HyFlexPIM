@@ -93,3 +93,9 @@ th: Determines the SLC rate via gradient sensitivity ranking.
 
 Then, run inference to evaluate noise-aware model accuracy.
 
+
+
+## 📝 License
+This project is licensed under the [MIT License](./LICENSE).
+
+
