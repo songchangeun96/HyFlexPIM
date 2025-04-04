@@ -46,6 +46,22 @@ The steps are sequential and can be executed one by one.
 
 ## ✅ Step 1: Model Preparation
 By default, the notebook uses the LLaMA-3.2 1B model and the PTB dataset.
+
+To use the LLaMA 3.2 1B model, you must have **access to the gated repository** on Hugging Face.
+
+1. **Log in to Hugging Face:**
+   - Visit [https://huggingface.co/login](https://huggingface.co/login) and log in with your account.
+
+2. **Request access to the LLaMA 3.2 1B model:**
+   - Go to [https://huggingface.co/meta-llama/Llama-3.2-1B](https://huggingface.co/meta-llama/Llama-3.2-1B)
+   - Click the **"Access repository"** button and agree to Meta’s license.
+
+3. **Create a read-only access token:**
+   - Visit [https://huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)
+   - Click **"New token"**, give it a name like `llama3-token`, set the role to **read**, and create the token.
+   - Copy the token that looks like: `hf_...`
+   - Use this token in cell 3 of HyFlexPIM_llama3.ipynb
+
 You can replace them with your own quantized model and dataset.
 
 The function evaluate_model() can be used to evaluate loss (optional).
