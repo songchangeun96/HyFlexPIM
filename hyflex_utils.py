@@ -14,8 +14,18 @@ import torch.nn as nn
 import time
 import copy
 
-def tokenize_function(examples):
-    return tokenizer(examples[text_column_name], truncation=True, max_length=512, padding='max_length')
+# def tokenize_function(examples):
+#     return tokenizer(examples[text_column_name], truncation=True, max_length=512, padding='max_length')
+# hyflex_utils.py
+
+def tokenize_function(examples, tokenizer, text_column_name):
+    return tokenizer(
+        examples[text_column_name],
+        truncation=True,
+        max_length=512,
+        padding="max_length"
+    )
+
 
     
 class CausalDataCollator:
