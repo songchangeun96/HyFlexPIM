@@ -207,7 +207,7 @@ def replace_linear_layer_bert(model, rank=None):
 #  Gradient  
 def save_gradient(layer, layer_name, i):
     if hasattr(layer, 'Sigma') and layer.Sigma.diag.grad is not None:
-        save_path = f'./gradient/pre_final_batch_epoch1_layer{i}_{layer_name}_Sigma_diag_grad.pth'
+        save_path = f'./gradient/pre_final_batch_layer{i}_{layer_name}_Sigma_diag_grad.pth'
         os.makedirs("./gradient", exist_ok=True)
         torch.save(layer.Sigma.diag.grad, save_path)
         print(f" Saved gradient for layer {i} {layer_name} Sigma.")
@@ -846,12 +846,12 @@ def load_gradients(model):
     """  gradient LLaMA    """
     for i, layer in enumerate(model.model.layers):
         try:
-            layer.self_attn.q_proj.Sigma.diag.grad = torch.load(f'./gradient/pre_final_batch_epoch1_layer{i}_query_Sigma_diag_grad.pth')
-            layer.self_attn.k_proj.Sigma.diag.grad = torch.load(f'./gradient/pre_final_batch_epoch1_layer{i}_key_Sigma_diag_grad.pth')
-            layer.self_attn.v_proj.Sigma.diag.grad = torch.load(f'./gradient/pre_final_batch_epoch1_layer{i}_value_Sigma_diag_grad.pth')
-            layer.self_attn.o_proj.Sigma.diag.grad = torch.load(f'./gradient/pre_final_batch_epoch1_layer{i}_projection_Sigma_diag_grad.pth')
-            layer.mlp.gate_proj.Sigma.diag.grad = torch.load(f'./gradient/pre_final_batch_epoch1_layer{i}_fc1_Sigma_diag_grad.pth')
-            layer.mlp.down_proj.Sigma.diag.grad = torch.load(f'./gradient/pre_final_batch_epoch1_layer{i}_fc2_Sigma_diag_grad.pth')
+            layer.self_attn.q_proj.Sigma.diag.grad = torch.load(f'./gradient/pre_final_batch_layer{i}_query_Sigma_diag_grad.pth')
+            layer.self_attn.k_proj.Sigma.diag.grad = torch.load(f'./gradient/pre_final_batch_layer{i}_key_Sigma_diag_grad.pth')
+            layer.self_attn.v_proj.Sigma.diag.grad = torch.load(f'./gradient/pre_final_batch_layer{i}_value_Sigma_diag_grad.pth')
+            layer.self_attn.o_proj.Sigma.diag.grad = torch.load(f'./gradient/pre_final_batch_layer{i}_projection_Sigma_diag_grad.pth')
+            layer.mlp.gate_proj.Sigma.diag.grad = torch.load(f'./gradient/pre_final_batch_layer{i}_fc1_Sigma_diag_grad.pth')
+            layer.mlp.down_proj.Sigma.diag.grad = torch.load(f'./gradient/pre_final_batch_layer{i}_fc2_Sigma_diag_grad.pth')
 
         except FileNotFoundError as e:
             print(f"🚨 Warning: Missing gradient file for layer {i}. Error: {e}")
@@ -863,12 +863,12 @@ def load_gradients_bert(model):
 
     for i, layer in enumerate(model.bert.encoder.layer):
         try:
-            layer.attention.self.query.Sigma.diag.grad = torch.load(f'./gradient/pre_final_batch_epoch1_layer{i}_layer{i}_q_Sigma_diag_grad.pth', map_location=device)
-            layer.attention.self.key.Sigma.diag.grad = torch.load(f'./gradient/pre_final_batch_epoch1_layer{i}_layer{i}_k_Sigma_diag_grad.pth', map_location=device)
-            layer.attention.self.value.Sigma.diag.grad = torch.load(f'./gradient/pre_final_batch_epoch1_layer{i}_layer{i}_v_Sigma_diag_grad.pth', map_location=device)
-            layer.attention.output.dense.Sigma.diag.grad = torch.load(f'./gradient/pre_final_batch_epoch1_layer{i}_layer{i}_proj_Sigma_diag_grad.pth', map_location=device)
-            layer.intermediate.dense.Sigma.diag.grad = torch.load(f'./gradient/pre_final_batch_epoch1_layer{i}_layer{i}_fc1_Sigma_diag_grad.pth', map_location=device)
-            layer.output.dense.Sigma.diag.grad = torch.load(f'./gradient/pre_final_batch_epoch1_layer{i}_layer{i}_fc2_Sigma_diag_grad.pth', map_location=device)
+            layer.attention.self.query.Sigma.diag.grad = torch.load(f'./gradient/pre_final_batch_layer{i}_query_Sigma_diag_grad.pth', map_location=device)
+            layer.attention.self.key.Sigma.diag.grad = torch.load(f'./gradient/pre_final_batch_layer{i}_key_Sigma_diag_grad.pth', map_location=device)
+            layer.attention.self.value.Sigma.diag.grad = torch.load(f'./gradient/pre_final_batch_layer{i}_value_Sigma_diag_grad.pth', map_location=device)
+            layer.attention.output.dense.Sigma.diag.grad = torch.load(f'./gradient/pre_final_batch_layer{i}_projection_Sigma_diag_grad.pth', map_location=device)
+            layer.intermediate.dense.Sigma.diag.grad = torch.load(f'./gradient/pre_final_batch_layer{i}_fc1_Sigma_diag_grad.pth', map_location=device)
+            layer.output.dense.Sigma.diag.grad = torch.load(f'./gradient/pre_final_batch_layer{i}_fc2_Sigma_diag_grad.pth', map_location=device)
 
         except FileNotFoundError as e:
             print(f"🚨 Warning: Missing gradient file for BERT layer {i}. Error: {e}")
