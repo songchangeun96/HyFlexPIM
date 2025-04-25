@@ -69,6 +69,7 @@ To use the LLaMA 3.2 1B (or BERT) model, you must have **access to the gated rep
 ## BERT Large
 
 1. You don't need specific access to run, just run all the cells in step 1.
+2. You can change the task (default = "mrpc")of the GLUE dataset ("mrpc", "sst2", "cola", "qnli", "qqp", "mrpc", "stsb", "rte")
 
 You can replace them with your own quantized model and dataset.
 
