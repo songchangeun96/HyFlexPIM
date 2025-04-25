@@ -17,7 +17,7 @@ Repository URL: [https://github.com/songchangeun96/HyFlexPIM](https://github.com
 📁 File Structure
 
 HyFlexPIM_llama3.ipynb: Main simulation notebook for Llama 3 model (with labeled steps)
-HyFlexPIM_BERT.ipynb: Main simulation notebook BERT-Large model(with labeled steps)
+HyFlexPIM_BERT.ipynb: Main simulation notebook BERT-Base and BERT-Large model(with labeled steps)
 
 hyflex_utils.py: Utility functions
 
@@ -66,10 +66,15 @@ To use the LLaMA 3.2 1B (or BERT) model, you must have **access to the gated rep
    - Copy the token that looks like: `hf_...`
    - Use this token in cell 3 of HyFlexPIM_llama3.ipynb
   
-## BERT Large
+## BERT Base & Large
 
 1. You don't need specific access to run, just run all the cells in step 1.
-2. You can change the task (default = "mrpc")of the GLUE dataset ("mrpc", "sst2", "cola", "qnli", "qqp", "mrpc", "stsb", "rte")
+2. You can choose a model by using the code below.
+   ```
+   model_ = "bert-large-uncased"
+   # model_ = "bert-base-uncased"
+   ```
+4. You can change the task (default = "mrpc")of the GLUE dataset ("mrpc", "sst2", "cola", "qnli", "qqp", "mrpc", "stsb", "rte")
 
 You can replace them with your own quantized model and dataset.
 
