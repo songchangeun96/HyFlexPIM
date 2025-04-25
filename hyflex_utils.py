@@ -2,7 +2,8 @@ from transformers import AutoTokenizer, LlamaForCausalLM, DataCollatorForLanguag
 from datasets import load_dataset
 from accelerate import Accelerator
 from torch.utils.data import DataLoader
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, f1_score, matthews_corrcoef
+from scipy.stats import pearsonr
 from itertools import chain
 import torch
 import math
@@ -251,23 +252,50 @@ def evaluate_model(model, tokenizer, eval_dataloader):
 
 
 
-def evaluate_model_bert(model, tokenizer, eval_dataloader):
+
+def evaluate_model_bert(model, tokenizer, eval_dataloader, task="sst2"):
     model.eval()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
     preds, labels = [], []
-    for batch in tqdm(eval_dataloader):
+    for batch in tqdm(eval_dataloader, desc=f"Evaluating {task}"):
         batch = {k: v.to(device) for k, v in batch.items()}
         with torch.no_grad():
             outputs = model(**batch)
             logits = outputs.logits
-            preds += logits.argmax(dim=-1).tolist()
+
+            if task == "stsb":
+                preds += logits.squeeze(-1).tolist()  # Regression
+            else:
+                preds += logits.argmax(dim=-1).tolist()  # Classification
+
             labels += batch["labels"].tolist()
 
-    acc = accuracy_score(labels, preds)
-    print(f"Validation Accuracy: {acc:.4f}")
-    return acc
+    if task == "cola":
+        metric = matthews_corrcoef(labels, preds)
+        print(f"Validation MCC (Matthews Correlation Coefficient): {metric:.4f}")
+        return metric
+
+    elif task in ["mrpc", "qqp"]:
+        acc = accuracy_score(labels, preds)
+        f1 = f1_score(labels, preds)
+        print(f"Validation Accuracy: {acc:.4f}")
+        return acc
+
+    elif task == "stsb":
+        # Pearson correlation
+        corr, _ = pearsonr(labels, preds)
+        print(f"Validation Pearson Correlation: {corr:.4f}")
+        return corr
+
+    elif task in ["sst2", "qnli", "rte"]:
+        acc = accuracy_score(labels, preds)
+        print(f"Validation Accuracy: {acc:.4f}")
+        return acc
+
+    else:
+        raise ValueError(f"Unsupported task: {task}")
 
     
 #  Training w/ gradient saving
@@ -511,7 +539,12 @@ def train_model_bert(model, tokenizer, optimizer, train_dataloader, eval_dataloa
 
     num_training_steps = len(train_dataloader) * epochs
     lr_scheduler = torch.optim.lr_scheduler.LinearLR(optimizer, start_factor=1.0, end_factor=0.0, total_iters=num_training_steps)
-
+    # lr_scheduler = get_scheduler(
+    #     name="linear",
+    #     optimizer=optimizer,
+    #     num_warmup_steps=int(0.1 * num_training_steps),  # 10% warmup
+    #     num_training_steps=num_training_steps,
+    # )
     for epoch in range(epochs):
         total_train_loss = 0
         progress_bar = tqdm(train_dataloader, desc=f"Epoch {epoch+1}", unit="batch")
