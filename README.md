@@ -16,7 +16,8 @@ Repository URL: [https://github.com/songchangeun96/HyFlexPIM](https://github.com
 
 📁 File Structure
 
-HyFlexPIM_llama3.ipynb: Main simulation notebook (with labeled steps)
+HyFlexPIM_llama3.ipynb: Main simulation notebook for Llama 3 model (with labeled steps)
+HyFlexPIM_BERT.ipynb: Main simulation notebook BERT-Large model(with labeled steps)
 
 hyflex_utils.py: Utility functions
 
@@ -39,15 +40,18 @@ pip install -r requirements.txt
 ```
 
 ## 🚀 How to Run
-Launch the HyFlexPIM_llama3.ipynb notebook using Jupyter and follow each block labeled Step X.
+Launch the HyFlexPIM_llama3.ipynb (or HyFlexPIM_BERT.ipynb) notebook using Jupyter and follow each block labeled Step X.
 The steps are sequential and can be executed one by one.
 
-## 🧪 Simulation Steps
+## 🧪 Simulation Steps 
 
-## ✅ Step 1: Model Preparation
+## ✅ Step 1: Model Preparation 
+
+## Llama3
+
 By default, the notebook uses the LLaMA-3.2 1B model and the PTB dataset.
 
-To use the LLaMA 3.2 1B model, you must have **access to the gated repository** on Hugging Face.
+To use the LLaMA 3.2 1B (or BERT) model, you must have **access to the gated repository** on Hugging Face.
 
 1. **Log in to Hugging Face:**
    - Visit [https://huggingface.co/login](https://huggingface.co/login) and log in with your account.
@@ -61,6 +65,10 @@ To use the LLaMA 3.2 1B model, you must have **access to the gated repository** 
    - Click **"New token"**, give it a name like `llama3-token`, set the role to **read**, and create the token.
    - Copy the token that looks like: `hf_...`
    - Use this token in cell 3 of HyFlexPIM_llama3.ipynb
+  
+## BERT Large
+
+1. You don't need specific access to run, just run all the cells in step 1.
 
 You can replace them with your own quantized model and dataset.
 
@@ -74,12 +82,13 @@ After training, merge all adapter paths using:
 ```bash
 model = model.merge_and_unload()
 ```
-This step consolidates model weights and prepares them for SVD decomposition.
+This step consolidates model weights and prepares them for SVD decomposition. (This is only for Llama3)
 
 ## ✅ Step 3: Singular Value Decomposition (SVD)
 Apply SVD and truncate all linear layers via:
+
 ```bash
-replace_linear_layer_llama(model)
+replace_linear_layer_{your model}(model)
 ```
 Converts all Linear layers into low-rank U Σ Vᵀ format.
 
@@ -93,19 +102,23 @@ Perform gradient redistribution based on gradient sensitivity.
 Gradient files are saved in ./gradient/ and used for selective noise injection.
 Save the final model after this step.
 
-## ✅ Step 5: Noise-Injection Inference
-Reload the gradients and apply noise:
+## ✅ Step 5: Noise-Injection Inference to generate plots
+First, set the standard deviation (std) for noise injection (default is 0.025), and change the lists inside thresholds
+e.g., thresholds = [0, 20] --> Simulation for 0% of SLC rate, and 20% of SLC rate
+      thresholds = [0, 20, 40] --> Simulation for 0% of SLC rate, 20% of SLC rate, 40% of SLC rate
 
-```bash
-load_gradients(...)
-apply_noise_to_llama(model, std=..., th=...)
-```
+   - std: Controls noise magnitude.
 
-- std: Controls noise magnitude.
+   - thresholds: Determines the proportion of weights stored in SLC by adjusting a threshold parameter.
 
-- th: Determines the proportion of weights stored in SLC by adjusting a threshold parameter.
 
-Then, run inference to evaluate noise-aware model loss.
+
+Second, set the path of your best-trained model after SVD.
+
+Then, run inference to evaluate the noise-aware model loss. (This will generate the plots based on your SLC (thresholds) rate)
+
+
+
 
 
 
